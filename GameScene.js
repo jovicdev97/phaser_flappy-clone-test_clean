@@ -7,6 +7,8 @@ export class GameScene extends Phaser.Scene {
     constructor() {
         super('GameScene');
         this.gameOverFlag = false;
+        this.startScreen = null;
+        this.startGameFlag = false;
     }
 
     preload() {
@@ -17,13 +19,12 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         this.add.image(this.game.config.width / 2, this.game.config.height / 2, 'sky');
-
         this.bird = new Bird(this, 50, this.game.config.height / 2);
         this.pipeManager = new PipeManager(this);
         this.scoreManager = new ScoreManager(this);
 
         this.physics.add.collider(this.bird, this.pipeManager.group, this.gameOver, null, this);
-
+        
         this.input.on('pointerdown', this.flapBird, this);
         this.input.keyboard.on('keydown-SPACE', this.flapBird, this);
 
@@ -31,18 +32,40 @@ export class GameScene extends Phaser.Scene {
             delay: CONSTANTS.PIPE_SPAWN_INTERVAL,
             callback: this.handlePipeSpawn,
             callbackScope: this,
-            loop: true
+            loop: true,
+            paused: true 
         });
+
+        this.showStartScreen();
     }
 
     update() {
-        if (!this.gameOverFlag) {
+        if (!this.gameOverFlag && this.startGameFlag) {
             this.bird.update();
         }
     }
 
+    showStartScreen() {
+        this.startScreen = this.add.text(
+            this.game.config.width / 2,
+            this.game.config.height / 2,
+            'START GAME',
+            { fontSize: '24px', fill: '#fff' }
+        ).setOrigin(0.5);
+    }
+
     flapBird() {
-        if (this.gameOverFlag) {
+        if (this.startScreen) {
+            this.startScreen.destroy();
+            this.startScreen = null;
+            this.startGameFlag = true; 
+            this.gameOverFlag = false;
+            this.pipeManager.resetPipes();
+            this.scoreManager.resetScore();
+            this.physics.resume();
+            this.pipeTimer.paused = false; 
+            this.bird.resetPosition();
+        } else if (this.gameOverFlag) {
             this.restartGame(); 
         } else {
             this.bird.flap();
@@ -68,12 +91,12 @@ export class GameScene extends Phaser.Scene {
 
     restartGame() {
         this.gameOverFlag = false;
-        this.physics.resume();
-        this.bird.clearTint();
-        this.bird.resetPosition(); 
         this.pipeManager.resetPipes();
-        this.scoreManager.resetScore(); 
+        this.scoreManager.resetScore();
         this.pipeTimer.paused = false;
-        this.input.on('pointerdown', this.flapBird, this); 
+        this.bird.resetPosition();
+        this.bird.clearTint();
+        this.physics.resume();
+        this.input.on('pointerdown', this.flapBird, this);
     }
 }

@@ -10,7 +10,7 @@ export class PipeManager {
     }
 
     spawnPipe() {
-        const hole = Math.floor(Math.random() * (8 - CONSTANTS.GAP_SIZE / 64)) + 1;
+        const hole = Math.floor(Math.random() * (6)) + 1;
 
         for (let i = 0; i < 8; i++) {
             if (i < hole || i >= hole + CONSTANTS.GAP_SIZE / 64) {
@@ -24,6 +24,6 @@ export class PipeManager {
     }
 
     resetPipes() {
-        this.group.clear(true, true); 
+        this.group.clear(true, true);
     }
 }

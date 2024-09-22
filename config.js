@@ -20,9 +20,11 @@ export const CONSTANTS = {
 
 export function loadConfigFromJson(json) {
     if (json.pipes && json.bird) {
-        CONSTANTS.PIPE_SPAWN_INTERVAL = json.pipes.spawnInterval;
-        CONSTANTS.BIRD_FLAP_VELOCITY = json.bird.flapVelocity;
-        CONSTANTS.PIPE_VELOCITY = json.pipes.velocity;
-        CONSTANTS.GAP_SIZE = json.pipes.gapSize;
+        Object.assign(CONSTANTS, {
+            PIPE_SPAWN_INTERVAL: json.pipes.spawnInterval,
+            BIRD_FLAP_VELOCITY: json.bird.flapVelocity,
+            PIPE_VELOCITY: json.pipes.velocity,
+            GAP_SIZE: json.pipes.gapSize,
+        });
     }
 }
