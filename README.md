@@ -1,3 +1,5 @@
+![preview](http://i.epvpimg.com/TZKseab.gif)
+
 simple flappy bird clone, not for production ready
 
 you can use it as a browser version, or as a electron app
